@@ -1,9 +1,19 @@
-# Aurelios Pilartes 
-
 from pyunpack import Archive
+
+def carregar_word_list(nome_arquivo):
+    try:
+        with open(nome_arquivo, 'r') as arquivo:
+            lista_senhas = arquivo.read().splitlines()
+            return lista_senhas
+    except Exception as e:
+        print(f"Erro ao carregar a word list: {e}")
+        return []
 
 def descompactar_arquivo_rar(caminho_arquivo_rar, destino, lista_senhas=None):
     try:
+        if lista_senhas is None:
+            lista_senhas = []  # Se nenhuma word list for fornecida, cria uma lista vazia
+
         with Archive(caminho_arquivo_rar) as arquivo_rar:
             if lista_senhas:
                 for senha in lista_senhas:
@@ -13,7 +23,7 @@ def descompactar_arquivo_rar(caminho_arquivo_rar, destino, lista_senhas=None):
                         return True
                     except Exception as e:
                         pass
-                print("Nenhuma senha válida encontrada na lista.")
+                print("Nenhuma senha válida encontrada na word list.")
                 return False
             else:
                 arquivo_rar.extractall(destino)
@@ -26,6 +36,7 @@ def descompactar_arquivo_rar(caminho_arquivo_rar, destino, lista_senhas=None):
 # Exemplo de uso:
 caminho_arquivo_rar = 'caminho/do/arquivo.rar'
 destino = 'caminho/da/pasta_de_destino'
-lista_senhas = ['senha1', 'senha2', 'senha3']  # Adicione aqui as senhas que deseja testar
+nome_arquivo_word_list = 'caminho/do/arquivo_word_list.txt'
 
+lista_senhas = carregar_word_list(nome_arquivo_word_list)
 descompactar_arquivo_rar(caminho_arquivo_rar, destino, lista_senhas)
